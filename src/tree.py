@@ -11,15 +11,16 @@
 #     }
 # }
 
-from .drawdown import markdownToHtml
+import markdown
+
+from .files import readFiles
 from .templates.postFragment import postFragment
 from .utils import documentDict
-from .files import readFiles
 
 postFiles = readFiles("markdown")
 postMdDocs = {key: documentDict(file) for key, file in postFiles.items()}
 postHtmlDocs = {
-    key.removesuffix(".md") + ".html": {**mdDoc, "_body": markdownToHtml(mdDoc["_body"])}
+    key.removesuffix(".md") + ".html": {**mdDoc, "_body": markdown.markdown(mdDoc["_body"])}
     for key, mdDoc in postMdDocs.items()
 }
 postFragments = {
