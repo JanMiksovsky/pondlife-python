@@ -14,7 +14,7 @@
 import markdown
 
 from .files import readFiles
-from .templates.postFragment import postFragment
+from .templates.singlePostPage import singlePostPage
 from .utils import documentDict
 
 postFiles = readFiles("markdown")
@@ -23,9 +23,11 @@ postHtmlDocs = {
     key.removesuffix(".md") + ".html": {**mdDoc, "_body": markdown.markdown(mdDoc["_body"])}
     for key, mdDoc in postMdDocs.items()
 }
-postFragments = {
-    key: postFragment(document, key)
+postPages = {
+    key: singlePostPage(document, key)
     for key, document in postHtmlDocs.items()
 }
 
-siteTree = postFragments
+siteTree = {
+    "posts": postPages
+}
