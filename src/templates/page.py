@@ -11,7 +11,7 @@ def page(data):
     <link rel="alternate" type="application/json" title="Dispatches from off the grid" href="/feed.json">
     <title>{data["title"]}</title>
   </head>
-  <body {"class=\"{data[\"area\"]}\"" if "area" in data else ""}>
+  <body {f'class="{data["area"]}"' if "area" in data else ""}>
     <header>
       <a href="/" class="home">#pondlife</a>
       <a href="/about.html" class="about">About</a>

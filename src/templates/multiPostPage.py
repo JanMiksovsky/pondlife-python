@@ -7,6 +7,7 @@ def multiPostPage(posts):
     postFragments = [postFragment(post, key) for key, post in posts.items()]
     return page({
         "title": "#pondlife",
+        "area": "home",
         "_body": f"""\
           <h1>#pondlife</h1>
           <p>https://pondlife-zero-deps.netlify.app</p>

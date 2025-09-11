@@ -23,6 +23,9 @@ aboutMd = aboutPath.read_text(encoding="utf-8")
 aboutMdDoc = documentDict(aboutMd)
 aboutHtmlDoc = mdDocToHtmlDoc(aboutMdDoc)
 
+# Assets
+assets = readFiles(here / "assets")
+
 # Static images
 images = readFiles("images")
 
@@ -37,6 +40,7 @@ postPages = {
 
 siteTree = {
     "about.html": page(aboutHtmlDoc),
+    "assets": assets,
     "images": images,
     "index.html": indexPage,
     "posts": postPages,
