@@ -1,4 +1,4 @@
-from ..siteInfo import siteInfo
+from ..site_info import site_info
 
 
 def page(data):
@@ -10,13 +10,13 @@ def page(data):
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/assets/styles.css">
-    <link rel="alternate" type="application/rss+xml" title="{siteInfo["description"]}" href="/feed.xml">
-    <link rel="alternate" type="application/json" title="{siteInfo["description"]}" href="/feed.json">
+    <link rel="alternate" type="application/rss+xml" title="{site_info["description"]}" href="/feed.xml">
+    <link rel="alternate" type="application/json" title="{site_info["description"]}" href="/feed.json">
     <title>{data["title"]}</title>
   </head>
   <body {f'class="{data["area"]}"' if "area" in data else ""}>
     <header>
-      <a href="/" class="home">{siteInfo["title"]}</a>
+      <a href="/" class="home">{site_info["title"]}</a>
       <a href="/about.html" class="about">About</a>
     </header>
     <main>    

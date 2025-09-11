@@ -1,10 +1,10 @@
 from .page import page
-from .postFragment import postFragment
+from .post_fragment import post_fragment
 
 
-def singlePostPage(post, key):
+def single_post_page(post, key):
     """Base page template for all pages"""
     return page({
         "title": post["title"],
-        "_body": postFragment(post, key)
+        "_body": post_fragment(post, key)
     })

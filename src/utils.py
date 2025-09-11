@@ -10,7 +10,7 @@ FRONT_MATTER_RE = re.compile(
     re.DOTALL | re.MULTILINE,
 )
 
-def documentDict(input: str | bytes) -> dict[str, str]:
+def document_dict(input: str | bytes) -> dict[str, str]:
     """
     Parse a text file with simplistic front matter delimited by lines of '---'.
     Front matter supports only 'key: value' per line (no nesting).
@@ -40,6 +40,6 @@ def documentDict(input: str | bytes) -> dict[str, str]:
 
     return result
 
-def mdDocToHtmlDoc(mdDoc: dict) -> dict:
+def md_doc_to_html_doc(md_doc: dict) -> dict:
     """Convert the '_body' of a markdown document dict to HTML, returning a new dict."""
-    return {**mdDoc, "_body": markdown.markdown(mdDoc["_body"])}
+    return {**md_doc, "_body": markdown.markdown(md_doc["_body"])}

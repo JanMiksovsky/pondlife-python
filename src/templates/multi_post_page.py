@@ -1,17 +1,17 @@
-from ..siteInfo import siteInfo
+from ..site_info import site_info
 from .page import page
-from .postFragment import postFragment
+from .post_fragment import post_fragment
 
 
-def multiPostPage(posts):
+def multi_post_page(posts):
     """Base page template for all pages"""
-    postFragments = [postFragment(post, key) for key, post in posts.items()]
+    postFragments = [post_fragment(post, key) for key, post in posts.items()]
     return page({
-        "title": siteInfo["title"],
+        "title": site_info["title"],
         "area": "home",
         "_body": f"""\
-          <h1>{siteInfo["title"]}</h1>
-          <p>{siteInfo["description"]}</p>
+          <h1>{site_info["title"]}</h1>
+          <p>{site_info["description"]}</p>
           {"".join(postFragments)}
           <footer>
             <a href="/feed.xml">RSS feed</a>

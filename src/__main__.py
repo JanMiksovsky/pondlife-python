@@ -1,5 +1,5 @@
 from .files import clearFiles, writeFiles
-from .siteTree import siteTree
+from .site_tree import site_tree
 
 clearFiles("build")
-writeFiles("build", siteTree)
+writeFiles("build", site_tree)
