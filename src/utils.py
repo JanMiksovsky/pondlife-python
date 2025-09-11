@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 
+import markdown
+
 FRONT_MATTER_RE = re.compile(
     r"^\ufeff?---\s*\r?\n"         # opening --- (allow optional BOM)
     r"(?P<frontmatter>.*?)"        # front matter content (captured, named)
@@ -37,3 +39,7 @@ def documentDict(input: str | bytes) -> dict[str, str]:
         result["_body"] = text
 
     return result
+
+def mdDocToHtmlDoc(mdDoc: dict) -> dict:
+    """Convert the '_body' of a markdown document dict to HTML, returning a new dict."""
+    return {**mdDoc, "_body": markdown.markdown(mdDoc["_body"])}
