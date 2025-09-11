@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import natsort
+
 
 def clearFiles(folder):
     """Delete all files and subfolders in the specified folder."""
@@ -22,7 +24,8 @@ def readFiles(folder) -> dict:
     """
     folder_path = folder if isinstance(folder, Path) else Path(folder)
     result = {}
-    for entry in folder_path.iterdir():
+    entries = natsort.natsorted(folder_path.iterdir())
+    for entry in entries:
         if entry.is_file():
             result[entry.name] = entry.read_bytes()
         elif entry.is_dir():
