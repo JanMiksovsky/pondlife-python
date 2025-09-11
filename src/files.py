@@ -1,5 +1,6 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
 
 def clearFiles(folder):
     """Delete all files and subfolders in the specified folder."""
@@ -23,7 +24,7 @@ def readFiles(folder) -> dict:
     result = {}
     for entry in folder_path.iterdir():
         if entry.is_file():
-            result[entry.name] = entry.read_text()
+            result[entry.name] = entry.read_bytes()
         elif entry.is_dir():
             # Recursively read subfolder using Path object
             result[entry.name] = readFiles(entry)
@@ -32,11 +33,12 @@ def readFiles(folder) -> dict:
 def writeFiles(folder, files_dict):
     """Write each (key, value) in files_dict to a file named key in folder, with value as content."""
     os.makedirs(folder, exist_ok=True)
-    for name, content in files_dict.items():
+    for name, value in files_dict.items():
         path = os.path.join(folder, name)
-        if isinstance(content, dict):
+        if isinstance(value, dict):
             # Recursively write subfolder
-            writeFiles(path, content)
+            writeFiles(path, value)
         else:
-            with open(path, 'w', encoding='utf-8') as f:
-                f.write(content)
+            data = value if isinstance(value, bytes) else value.encode("utf-8")
+            with open(path, "wb") as f:
+                f.write(data)

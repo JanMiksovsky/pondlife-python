@@ -28,6 +28,9 @@ postPages = {
     for key, document in postHtmlDocs.items()
 }
 
+images = readFiles("images")
+
 siteTree = {
-    "posts": postPages
+    "posts": postPages,
+    "images": images
 }

@@ -8,13 +8,14 @@ FRONT_MATTER_RE = re.compile(
     re.DOTALL | re.MULTILINE,
 )
 
-def documentDict(text: str) -> dict[str, str]:
+def documentDict(input: str | bytes) -> dict[str, str]:
     """
     Parse a text file with simplistic front matter delimited by lines of '---'.
     Front matter supports only 'key: value' per line (no nesting).
     Returns a dict of the keys plus '_body' with the remaining text.
     """
 
+    text = input.decode("utf-8") if isinstance(input, bytes) else input
     m = FRONT_MATTER_RE.match(text)
     result: dict[str, str] = {}
 
