@@ -16,7 +16,10 @@ from .utils import documentDict
 from .files import readFiles
 
 postFiles = readFiles("markdown")
-postDocuments = {key: documentDict(value) for key, value in postFiles.items()}
-postPages = {key: postFragment(value, key) for key, value in postDocuments.items()}
+postDocuments = {key: documentDict(file) for key, file in postFiles.items()}
+postPages = {
+    key.removesuffix(".md") + ".html": postFragment(document, key)
+    for key, document in postDocuments.items()
+}
 
-siteTree = postDocuments
+siteTree = postPages
