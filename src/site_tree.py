@@ -3,6 +3,7 @@ from pathlib import Path
 
 from .files import readFiles
 from .json_feed import json_feed
+from .json_feed_to_rss import json_feed_to_rss
 from .post_docs import post_docs
 from .templates.multi_post_page import multi_post_page
 from .templates.page import page
@@ -23,6 +24,7 @@ assets = readFiles(here / "assets")
 # Feeds
 feed = json_feed(post_docs)
 feed_json = json.dumps(feed, indent=2)
+rss_xml = json_feed_to_rss(feed)
 
 # Static images
 images = readFiles("images")
@@ -40,6 +42,7 @@ site_tree = {
     "about.html": about_page,
     "assets": assets,
     "feed.json": feed_json,
+    "feed.xml": rss_xml,
     "images": images,
     "index.html": index_page,
     "posts": post_pages,
