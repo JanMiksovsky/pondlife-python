@@ -8,7 +8,7 @@ from .post_docs import post_docs
 from .templates.multi_post_page import multi_post_page
 from .templates.page import page
 from .templates.single_post_page import single_post_page
-from .utils import document_dict, md_doc_to_html_doc
+from .utils import document_dict, md_doc_to_html_doc, paginate
 
 # About page
 here = Path(__file__).parent
@@ -29,8 +29,12 @@ rss_xml = json_feed_to_rss(feed)
 # Static images
 images = readFiles("images")
 
-# Index page
-index_page = multi_post_page(post_docs)
+# Pages area
+paginated = paginate(post_docs)
+pages = {
+    f"{i + 1}.html": multi_post_page(page)
+    for i, page in enumerate(paginated)
+}
 
 # Posts area
 post_pages = {
@@ -44,6 +48,7 @@ site_tree = {
     "feed.json": feed_json,
     "feed.xml": rss_xml,
     "images": images,
-    "index.html": index_page,
+    "index.html": pages["1.html"], # same as first page in pages area
+    "pages": pages,
     "posts": post_pages,
 }
