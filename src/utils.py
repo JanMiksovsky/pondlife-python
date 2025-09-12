@@ -10,6 +10,16 @@ FRONT_MATTER_RE = re.compile(
     re.DOTALL | re.MULTILINE,
 )
 
+def add_next_previous(docs: dict) -> dict:
+    """Add 'next_key' and 'previous_key' keys to each document in a dict of documents."""
+    keys = list(docs.keys())
+    extended = docs.copy()
+    for i, key in enumerate(keys):
+        doc = extended[key]
+        doc['next_key'] = keys[i + 1] if i < len(keys) - 1 else None
+        doc['previous_key'] = keys[i - 1] if i > 0 else None
+    return extended
+
 def document_dict(input: str | bytes) -> dict[str, str]:
     """
     Parse a text file with simplistic front matter delimited by lines of '---'.

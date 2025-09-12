@@ -38,7 +38,7 @@ pages = {
 
 # Posts area
 post_pages = {
-    key: single_post_page(document, key)
+    key: single_post_page(document, key, post_docs)
     for key, document in post_docs.items()
 }
 
