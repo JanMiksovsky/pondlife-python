@@ -1,16 +1,23 @@
-import markdown
+"""Markdown post pipeline"""
 
 from .files import readFiles
 from .parse_date import parse_date
-from .utils import add_next_previous, document_dict
+from .utils import (add_next_previous, document_dict, md_doc_to_html_doc,
+                    transform_dict)
 
 # Read markdown posts
 post_files = readFiles("markdown")
-post_md_docs = {key: {**document_dict(file), "date": parse_date(key)} for key, file in post_files.items()}
-post_html_docs = {
-    key.removesuffix(".md") + ".html": {**mdDoc, "_body": markdown.markdown(mdDoc["_body"])}
-    for key, mdDoc in post_md_docs.items()
-}
+post_md_docs = transform_dict(post_files, value=document_dict)
+with_date = transform_dict(
+    post_md_docs,
+    value=lambda doc, key: {**doc, "date": parse_date(key)}
+)
+post_html_docs = transform_dict(
+    with_date,
+    key=lambda k: k.removesuffix(".md") + ".html",
+    inverse_key=lambda k: k.removesuffix(".html") + ".md",
+    value=md_doc_to_html_doc
+)
 
 # Add `next_key`/`previous_key` properties so the post pages can be linked. The
 # posts are already in chronological order because their names start with a
@@ -18,7 +25,7 @@ post_html_docs = {
 # the adjacent posts in the list. We need to do this before reversing the order
 # in the next step; we want "next" to mean the next post in chronological order,
 # not display order.
-cross_linked = add_next_previous(post_html_docs)
+cross_linked = add_next_previous(dict(post_html_docs))
 
 # Entries are sorted by date; reverse for latest first
 post_docs = dict(reversed(list(cross_linked.items())))

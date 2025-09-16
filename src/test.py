@@ -1,5 +1,7 @@
 from collections.abc import Mapping
 
+from .utils import transform_dict
+
 
 class GreetMap(Mapping):
     names = "Alice", "Bob", "Carol"
@@ -16,4 +18,6 @@ class GreetMap(Mapping):
         return len(self.names)
 
 map = GreetMap()
+upper_map = transform_dict(map, value=str.upper)
 print(list(map.items()))
+print(list(upper_map.items()))

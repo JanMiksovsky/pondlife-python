@@ -1,5 +1,8 @@
+import inspect
 import re
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Callable
 
 import markdown
 
@@ -10,6 +13,7 @@ FRONT_MATTER_RE = re.compile(
     re.DOTALL | re.MULTILINE,
 )
 
+
 def add_next_previous(docs: dict) -> dict:
     """Add 'next_key' and 'previous_key' keys to each document in a dict of documents."""
     keys = list(docs.keys())
@@ -19,6 +23,7 @@ def add_next_previous(docs: dict) -> dict:
         doc['next_key'] = keys[i + 1] if i < len(keys) - 1 else None
         doc['previous_key'] = keys[i - 1] if i > 0 else None
     return extended
+
 
 def document_dict(input: str | bytes) -> dict[str, str]:
     """
@@ -49,10 +54,29 @@ def document_dict(input: str | bytes) -> dict[str, str]:
         result["_body"] = text
 
     return result
+    
+
+def fn_arity(fn: Callable) -> int:
+    """
+    Return the number of required positional-or-keyword parameters
+    for the given function.
+    
+    Similar to JavaScript's Function.length.
+    """
+    sig = inspect.signature(fn)
+    required = [
+        p
+        for p in sig.parameters.values()
+        if p.default is inspect._empty
+        and p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
+    ]
+    return len(required)
+
 
 def md_doc_to_html_doc(md_doc: dict) -> dict:
     """Convert the '_body' of a markdown document dict to HTML, returning a new dict."""
     return {**md_doc, "_body": markdown.markdown(md_doc["_body"])}
+
 
 def paginate(docs: dict, size: int = 10) -> list[dict]:
     """Split a dict of documents into a list of dicts, each with up to size items."""
@@ -65,3 +89,29 @@ def paginate(docs: dict, size: int = 10) -> list[dict]:
             "previous_page": i // size if i > 0 else None,
          } for i in range(0, len(items), size)]
     return pages
+
+
+def transform_dict(dict, key=None, inverse_key=None, value=None):
+    class TransformedMap(Mapping):
+        def __getitem__(self, result_key):
+            source_key = inverse_key(result_key) if inverse_key else result_key
+            source_value = dict[source_key]
+            if value:
+                arity = fn_arity(value)
+                if arity == 2:
+                    return value(source_value, source_key)
+                if arity == 1:
+                    return value(source_value)
+                return value()
+            return source_value
+
+        def __iter__(self):
+            for k in dict:
+                yield key(k) if key else k
+
+        def __len__(self):
+            return len(dict)
+        
+        # def __repr__(self):
+        #     return f"{self.__class__.__name__}({dict(self.items())})"
+    return TransformedMap()
