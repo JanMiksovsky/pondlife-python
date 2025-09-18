@@ -24,7 +24,95 @@ def add_next_previous(docs: dict) -> dict:
     return extended
 
 
-def document_dict(input: str | bytes) -> dict[str, str]:
+def fn_arity(fn: Callable) -> int:
+    """
+    Return the number of required positional-or-keyword parameters
+    for the given function.
+    
+    Similar to JavaScript's Function.length.
+    """
+    sig = inspect.signature(fn)
+    required = [
+        p
+        for p in sig.parameters.values()
+        if p.default is inspect._empty
+        and p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
+    ]
+    return len(required)
+
+
+def invoke_fns(m: Mapping) -> Mapping:
+    """If a value in the mapping is a callable, call it with no arguments"""
+    class InvokedMap(Mapping):
+        def __getitem__(self, key):
+            if key not in m:
+                return None
+            value = m[key]
+            if callable(value):
+                arity = fn_arity(value)
+                if arity == 0:
+                    return value()
+                raise ValueError(f"Function for key '{key}' must take 0 arguments, but takes {arity}")
+            return value
+
+        def __iter__(self):
+            yield from m
+
+        def __len__(self):
+            return len(m)
+
+    return InvokedMap()
+    
+
+def map_items(d: Mapping, key=None, inverse_key=None, value=None):
+    """
+    Return a Mapping that transforms the keys and/or values of the given mapping.
+    `key`: function that takes a source key and returns a result key
+    `inverse_key`: function that takes a result key and returns the source key
+    `value`: function that takes a source value and returns a result value
+    """
+    class TransformedMap(Mapping):
+        def __getitem__(self, result_key):
+            source_key = inverse_key(result_key) if inverse_key else result_key
+            source_value = d[source_key]
+            if value:
+                arity = fn_arity(value)
+                if arity == 2:
+                    return value(source_value, source_key)
+                if arity == 1:
+                    return value(source_value)
+                return value()
+            return source_value
+
+        def __iter__(self):
+            for k in d:
+                yield key(k) if key else k
+
+        def __len__(self):
+            return len(d)
+        
+    return TransformedMap()
+
+
+def md_doc_to_html_doc(md_doc: dict) -> dict:
+    """Convert the '_body' of a markdown document to HTML, returning a new document."""
+    return {**md_doc, "_body": markdown.markdown(md_doc["_body"])}
+
+
+def paginate(docs: Mapping, size: int = 10) -> list[dict]:
+    """Split a set of documents into a list of dicts, each with up to `size` items."""
+    items = list(docs.items())
+    pages = [{
+            "items": dict(items[i:i + size]),
+            "next_page": (i + size) // size + 1 if i + size < len(items) else None,
+            "page": i // size + 1,
+            "page_count": (len(items) + size - 1) // size,
+            "previous_page": i // size if i > 0 else None,
+         } for i in range(0, len(items), size)]
+    return pages
+
+
+def text_to_doc(input: str | bytes) -> dict[str, str]:
     """
     Parse a text file with simplistic front matter delimited by lines of '---'.
     Front matter supports only 'key: value' per line (no nesting).
@@ -53,65 +141,6 @@ def document_dict(input: str | bytes) -> dict[str, str]:
         result["_body"] = text
 
     return result
-    
-
-def fn_arity(fn: Callable) -> int:
-    """
-    Return the number of required positional-or-keyword parameters
-    for the given function.
-    
-    Similar to JavaScript's Function.length.
-    """
-    sig = inspect.signature(fn)
-    required = [
-        p
-        for p in sig.parameters.values()
-        if p.default is inspect._empty
-        and p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
-    ]
-    return len(required)
-
-
-def md_doc_to_html_doc(md_doc: dict) -> dict:
-    """Convert the '_body' of a markdown document dict to HTML, returning a new dict."""
-    return {**md_doc, "_body": markdown.markdown(md_doc["_body"])}
-
-
-def paginate(docs: dict, size: int = 10) -> list[dict]:
-    """Split a dict of documents into a list of dicts, each with up to size items."""
-    items = list(docs.items())
-    pages = [{
-            "items": dict(items[i:i + size]),
-            "next_page": (i + size) // size + 1 if i + size < len(items) else None,
-            "page": i // size + 1,
-            "page_count": (len(items) + size - 1) // size,
-            "previous_page": i // size if i > 0 else None,
-         } for i in range(0, len(items), size)]
-    return pages
-
-
-def transform_dict(d: Mapping, key=None, inverse_key=None, value=None):
-    class TransformedMap(Mapping):
-        def __getitem__(self, result_key):
-            source_key = inverse_key(result_key) if inverse_key else result_key
-            source_value = d[source_key]
-            if value:
-                arity = fn_arity(value)
-                if arity == 2:
-                    return value(source_value, source_key)
-                if arity == 1:
-                    return value(source_value)
-                return value()
-            return source_value
-
-        def __iter__(self):
-            for k in d:
-                yield key(k) if key else k
-
-        def __len__(self):
-            return len(d)
-        
-    return TransformedMap()
 
 
 def traverse_keys(d: Mapping, *args: str):

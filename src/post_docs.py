@@ -2,17 +2,17 @@
 
 from .folder import Folder
 from .parse_date import parse_date
-from .utils import (add_next_previous, document_dict, md_doc_to_html_doc,
-                    transform_dict)
+from .utils import (add_next_previous, map_items, md_doc_to_html_doc,
+                    text_to_doc)
 
 # Read markdown posts
 post_folder = Folder("markdown")
-post_md_docs = transform_dict(post_folder, value=document_dict)
-with_date = transform_dict(
+post_md_docs = map_items(post_folder, value=text_to_doc)
+with_date = map_items(
     post_md_docs,
     value=lambda doc, key: {**doc, "date": parse_date(key)}
 )
-post_html_docs = transform_dict(
+post_html_docs = map_items(
     with_date,
     key=lambda k: k.removesuffix(".md") + ".html",
     inverse_key=lambda k: k.removesuffix(".html") + ".md",

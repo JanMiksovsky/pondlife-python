@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 
-from .utils import transform_dict
+from .utils import map_items
 
 
 class GreetMap(Mapping):
@@ -18,6 +18,6 @@ class GreetMap(Mapping):
         return len(self.names)
 
 m = GreetMap()
-upper_map = transform_dict(m, value=str.upper)
+upper_map = map_items(m, value=str.upper)
 print(list(m.items()))
 print(list(upper_map.items()))
