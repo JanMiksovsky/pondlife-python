@@ -1,7 +1,6 @@
 import inspect
 import re
 from collections.abc import Mapping
-from pathlib import Path
 from typing import Callable
 
 import markdown
@@ -112,6 +111,4 @@ def transform_dict(dict, key=None, inverse_key=None, value=None):
         def __len__(self):
             return len(dict)
         
-        # def __repr__(self):
-        #     return f"{self.__class__.__name__}({dict(self.items())})"
     return TransformedMap()

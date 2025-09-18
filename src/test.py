@@ -17,7 +17,7 @@ class GreetMap(Mapping):
     def __len__(self):
         return len(self.names)
 
-map = GreetMap()
-upper_map = transform_dict(map, value=str.upper)
-print(list(map.items()))
+m = GreetMap()
+upper_map = transform_dict(m, value=str.upper)
+print(list(m.items()))
 print(list(upper_map.items()))
