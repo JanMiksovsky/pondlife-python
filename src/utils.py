@@ -90,11 +90,11 @@ def paginate(docs: dict, size: int = 10) -> list[dict]:
     return pages
 
 
-def transform_dict(dict, key=None, inverse_key=None, value=None):
+def transform_dict(d: Mapping, key=None, inverse_key=None, value=None):
     class TransformedMap(Mapping):
         def __getitem__(self, result_key):
             source_key = inverse_key(result_key) if inverse_key else result_key
-            source_value = dict[source_key]
+            source_value = d[source_key]
             if value:
                 arity = fn_arity(value)
                 if arity == 2:
@@ -105,10 +105,20 @@ def transform_dict(dict, key=None, inverse_key=None, value=None):
             return source_value
 
         def __iter__(self):
-            for k in dict:
+            for k in d:
                 yield key(k) if key else k
 
         def __len__(self):
-            return len(dict)
+            return len(d)
         
     return TransformedMap()
+
+
+def traverse_keys(d: Mapping, *args: str):
+    """Use a set of keys to traverse a tree with dict nodes."""
+    node = d
+    for key in args:
+        if node is None or not isinstance(node, Mapping):
+            return None
+        node = node.get(key)
+    return node
