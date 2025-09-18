@@ -1,13 +1,13 @@
 """Markdown post pipeline"""
 
-from .files import readFiles
+from .folder import Folder
 from .parse_date import parse_date
 from .utils import (add_next_previous, document_dict, md_doc_to_html_doc,
                     transform_dict)
 
 # Read markdown posts
-post_files = readFiles("markdown")
-post_md_docs = transform_dict(post_files, value=document_dict)
+post_folder = Folder("markdown")
+post_md_docs = transform_dict(post_folder, value=document_dict)
 with_date = transform_dict(
     post_md_docs,
     value=lambda doc, key: {**doc, "date": parse_date(key)}

@@ -1,5 +1,6 @@
-from .files import clearFiles, writeFiles
+from .folder import Folder
 from .site_tree import site_tree
 
-clearFiles("build")
-writeFiles("build", site_tree)
+build = Folder("build")
+build.clear()
+build.update(site_tree)

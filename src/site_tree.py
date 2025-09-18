@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from .files import readFiles
+from .folder import Folder
 from .json_feed import json_feed
 from .json_feed_to_rss import json_feed_to_rss
 from .post_docs import post_docs
@@ -19,15 +19,14 @@ about_html_doc = md_doc_to_html_doc(about_md_doc)
 about_page = page(about_html_doc)
 
 # Assets
-assets = readFiles(here / "assets")
-
+assets = Folder(here / "assets")
 # Feeds
 feed = json_feed(post_docs)
 feed_json = json.dumps(feed, indent=2)
 rss_xml = json_feed_to_rss(feed)
 
 # Static images
-images = readFiles("images")
+images = Folder(here / "../images")
 
 # Pages area
 paginated = paginate(post_docs)
