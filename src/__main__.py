@@ -1,3 +1,8 @@
+"""
+Command-line interface for building and serving the site
+"""
+
+
 import sys
 from typing import Mapping
 
@@ -12,17 +17,18 @@ def build(mapping: Mapping):
     build_folder.clear()
     build_folder.update(mapping)
 
+
 def main():
     if len(sys.argv) == 2:
         cmd = sys.argv[1]
         if cmd == "build":
             build(site_tree)
             return
-        elif cmd == "serve":
+        if cmd == "serve":
             serve(site_tree)
-
     print("usage: python -m src [build|serve]")
     sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

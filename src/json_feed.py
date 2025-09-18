@@ -1,7 +1,9 @@
+from collections.abc import Mapping
+
 from .site_info import site_info
 
 
-def json_feed(posts: dict[str, dict]) -> dict:
+def json_feed(posts: Mapping[str, Mapping]) -> dict:
     """Generate posts in JSON Feed format"""
     return {
         "version": "https://jsonfeed.org/version/1.1",

@@ -1,3 +1,11 @@
+"""
+A simple HTTP server to serve a Mapping-based tree of resources
+
+A path like /a/b/c is treated as a series of keys into nested Mappings to
+produce the final resource.
+"""
+
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Mapping
@@ -21,8 +29,9 @@ CONTENT_TYPES = {
     ".xml": "application/xml",
 }
 
+
 def content_type(data: bytes, path: str) -> str:
-    """Return a best-effort guess of the content type of the given bytes and path."""
+    """Infer the content type of the given bytes and path"""
     # First try file extension
     extension = Path(path).suffix.lower()
     if extension in CONTENT_TYPES:
@@ -31,21 +40,21 @@ def content_type(data: bytes, path: str) -> str:
     # Fallback to content sniffing
     if data.startswith(b"<!DOCTYPE html") or b"<html" in data[:100]:
         return "text/html; charset=utf-8"
-    elif data.startswith(b"<?xml") or data.startswith(b"<svg"):
+    if data.startswith(b"<?xml") or data.startswith(b"<svg"):
         return "image/svg+xml"
-    elif data.startswith(b"\x89PNG\r\n\x1a\n"):
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
         return "image/png"
-    elif data.startswith(b"\xff\xd8\xff"):
+    if data.startswith(b"\xff\xd8\xff"):
         return "image/jpeg"
-    elif data.startswith(b"GIF87a") or data.startswith(b"GIF89a"):
+    if data.startswith(b"GIF87a") or data.startswith(b"GIF89a"):
         return "image/gif"
-    elif all(32 <= b < 127 or b in (9, 10, 13) for b in data[:100]):
+    if all(32 <= b < 127 or b in (9, 10, 13) for b in data[:100]):
         return "text/plain; charset=utf-8"
-    else:
-        return "application/octet-stream"
+    return "application/octet-stream"
+
 
 def handle_dict(mapping: Mapping):
-    """Return a request handler class that serves the given mapping."""
+    """Return a request handler class that serves the given mapping"""
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             path = unquote(self.path)   # decode %xx
@@ -81,14 +90,22 @@ def handle_dict(mapping: Mapping):
 
     return Handler
 
+
 def path_to_keys(path: str) -> list[str]:
     """Convert a URL path like /a/b/c to a list of keys ['a', 'b', 'c']."""
     parts = path.lstrip("/").split("/")
     return [part for part in parts if part]
 
+
 def serve(mapping: Mapping):
     """Serve the site represented by the given mapping."""
+    host = "127.0.0.1"
     port = 8000
-    with HTTPServer(("", port), handle_dict(mapping)) as httpd:
-        print(f"Serving on http://localhost:{port}")
-        httpd.serve_forever()
+    try:
+        httpd = HTTPServer((host, port), handle_dict(mapping))
+    except OSError:
+        # Try any free port
+        httpd = HTTPServer((host, 0), handle_dict(mapping))
+    host, port = httpd.server_address
+    print(f"Serving on http://{host}:{port}")
+    httpd.serve_forever()

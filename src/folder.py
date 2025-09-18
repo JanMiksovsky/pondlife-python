@@ -1,3 +1,5 @@
+
+
 import os
 from collections.abc import Mapping, MutableMapping
 from pathlib import Path
@@ -6,7 +8,10 @@ import natsort
 
 
 class Folder(MutableMapping):
-    """A MutableMapping interface to a folder on disk."""
+    """
+    A folder on disk as a mutable mapping. Keys are filenames or subfolder
+    names. Values are bytes (for files) or other Folders (for subfolders).
+    """
 
     def __init__(self, folder):
         p = folder if isinstance(folder, Path) else Path(folder)
@@ -25,7 +30,7 @@ class Folder(MutableMapping):
                 elif entry.is_dir():
                     Folder(entry).clear()  # Recursively clear subfolder
                     entry.rmdir()  # Remove the empty subfolder
-        
+
     def __delitem__(self, key):
         """Delete a file or subfolder."""
         os.makedirs(self.path, exist_ok=True)
@@ -43,10 +48,9 @@ class Folder(MutableMapping):
         entry_path = self.path / key
         if entry_path.is_file():
             return entry_path.read_bytes()
-        elif entry_path.is_dir():
+        if entry_path.is_dir():
             return Folder(entry_path)
-        else:
-            raise KeyError(key)
+        raise KeyError(key)
 
     def __iter__(self):
         if not self.path.exists():

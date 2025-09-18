@@ -1,3 +1,7 @@
+"""
+Utility functions
+"""
+
 import inspect
 import re
 from collections.abc import Mapping
@@ -24,13 +28,8 @@ def add_next_previous(docs: dict) -> dict:
     return extended
 
 
-def fn_arity(fn: Callable) -> int:
-    """
-    Return the number of required positional-or-keyword parameters
-    for the given function.
-    
-    Similar to JavaScript's Function.length.
-    """
+def arity(fn: Callable) -> int:
+    """Number of a function's required positional or keyword parameters"""
     sig = inspect.signature(fn)
     required = [
         p
@@ -49,10 +48,11 @@ def invoke_fns(m: Mapping) -> Mapping:
                 return None
             value = m[key]
             if callable(value):
-                arity = fn_arity(value)
-                if arity == 0:
+                n = arity(value)
+                if n == 0:
                     return value()
-                raise ValueError(f"Function for key '{key}' must take 0 arguments, but takes {arity}")
+                raise ValueError(
+                    f"Function for key '{key}' must take 0 arguments, but takes {n}")
             return value
 
         def __iter__(self):
@@ -62,9 +62,9 @@ def invoke_fns(m: Mapping) -> Mapping:
             return len(m)
 
     return InvokedMap()
-    
 
-def map_items(d: Mapping, key=None, inverse_key=None, value=None):
+
+def map_items(m: Mapping, key=None, inverse_key=None, value=None):
     """
     Return a Mapping that transforms the keys and/or values of the given mapping.
     `key`: function that takes a source key and returns a result key
@@ -74,23 +74,25 @@ def map_items(d: Mapping, key=None, inverse_key=None, value=None):
     class TransformedMap(Mapping):
         def __getitem__(self, result_key):
             source_key = inverse_key(result_key) if inverse_key else result_key
-            source_value = d[source_key]
+            source_value = m[source_key]
             if value:
-                arity = fn_arity(value)
-                if arity == 2:
+                n = arity(value)
+                if n == 3:
+                    return value(source_value, source_key, m)
+                if n == 2:
                     return value(source_value, source_key)
-                if arity == 1:
+                if n == 1:
                     return value(source_value)
                 return value()
             return source_value
 
         def __iter__(self):
-            for k in d:
+            for k in m:
                 yield key(k) if key else k
 
         def __len__(self):
-            return len(d)
-        
+            return len(m)
+
     return TransformedMap()
 
 
@@ -103,23 +105,22 @@ def paginate(docs: Mapping, size: int = 10) -> list[dict]:
     """Split a set of documents into a list of dicts, each with up to `size` items."""
     items = list(docs.items())
     pages = [{
-            "items": dict(items[i:i + size]),
-            "next_page": (i + size) // size + 1 if i + size < len(items) else None,
-            "page": i // size + 1,
-            "page_count": (len(items) + size - 1) // size,
-            "previous_page": i // size if i > 0 else None,
-         } for i in range(0, len(items), size)]
+        "items": dict(items[i:i + size]),
+        "next_page": (i + size) // size + 1 if i + size < len(items) else None,
+        "page": i // size + 1,
+        "page_count": (len(items) + size - 1) // size,
+        "previous_page": i // size if i > 0 else None,
+    } for i in range(0, len(items), size)]
     return pages
 
 
-def text_to_doc(input: str | bytes) -> dict[str, str]:
+def text_to_doc(content: str | bytes) -> dict[str, str]:
     """
     Parse a text file with simplistic front matter delimited by lines of '---'.
     Front matter supports only 'key: value' per line (no nesting).
     Returns a dict of the keys plus '_body' with the remaining text.
     """
-
-    text = input.decode("utf-8") if isinstance(input, bytes) else input
+    text = content.decode("utf-8") if isinstance(content, bytes) else content
     m = FRONT_MATTER_RE.match(text)
     result: dict[str, str] = {}
 
@@ -143,9 +144,9 @@ def text_to_doc(input: str | bytes) -> dict[str, str]:
     return result
 
 
-def traverse_keys(d: Mapping, *args: str):
-    """Use a set of keys to traverse a tree with dict nodes."""
-    node = d
+def traverse_keys(m: Mapping, *args: str):
+    """Use a set of keys to traverse a tree with Mapping nodes."""
+    node = m
     for key in args:
         if node is None or not isinstance(node, Mapping):
             return None

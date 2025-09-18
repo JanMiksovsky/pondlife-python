@@ -1,18 +1,25 @@
+"""
+JSON Feed support
+See https://jsonfeed.org/version/1
+"""
+
+
 from datetime import datetime, timezone
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Iterable, Optional
 from urllib.parse import urlparse
+from xml.sax.saxutils import escape as escape_xml
 
 
-def json_feed_to_rss(json_feed: Dict[str, Any], options: Optional[Dict[str, Any]] = None) -> str:
+def json_feed_to_rss(json_feed: dict[str, Any], options: Optional[dict[str, Any]] = None) -> str:
     """
-    Convert a JSON Feed (https://jsonfeed.org/version/1) object to RSS 2.0 XML text.
+    Convert a JSON Feed object to RSS 2.0 XML text.
     `options` may contain: feed_url, language.
     """
     options = options or {}
 
     description: Optional[str] = json_feed.get("description")
     home_page_url: Optional[str] = json_feed.get("home_page_url")
-    items: Iterable[Dict[str, Any]] = json_feed.get("items", []) or []
+    items: Iterable[dict[str, Any]] = json_feed.get("items", []) or []
     title: Optional[str] = json_feed.get("title")
 
     feed_url: Optional[str] = options.get("feed_url")
@@ -47,7 +54,8 @@ def json_feed_to_rss(json_feed: Dict[str, Any], options: Optional[Dict[str, Any]
     )
 
 
-def item_rss(item: Dict[str, Any]) -> str:
+def item_rss(item: dict[str, Any]) -> str:
+    """Convert a JSON Feed item to an RSS <item> element"""
     content_html: Optional[str] = item.get("content_html")
     item_id: Optional[str] = item.get("id")
     summary: Optional[str] = item.get("summary")
@@ -65,7 +73,8 @@ def item_rss(item: Dict[str, Any]) -> str:
         pub_date = None
 
     date_el = f"      <pubDate>{pub_date}</pubDate>\n" if pub_date else ""
-    is_perma_link_attr = ' isPermaLink="false"' if (item_id is not None and not is_absolute_url(str(item_id))) else ""
+    is_perma_link_attr = ' isPermaLink="false"' if (
+        item_id is not None and not is_absolute_url(str(item_id))) else ""
     guid_el = f"      <guid{is_perma_link_attr}>{item_id}</guid>\n" if item_id else ""
     desc_el = f"      <description>{escape_xml(summary)}</description>\n" if summary else ""
     content_el = f"      <content:encoded><![CDATA[{content_html}]]></content:encoded>\n" if content_html else ""
@@ -76,20 +85,6 @@ def item_rss(item: Dict[str, Any]) -> str:
         "    <item>\n"
         f"{date_el}{title_el}{link_el}{guid_el}{desc_el}{content_el}"
         "    </item>\n"
-    )
-
-
-def escape_xml(text: Optional[str]) -> str:
-    """Escape XML entities in text content."""
-    if text is None:
-        return ""
-    # Order matters: ampersand first to avoid double-escaping.
-    return (
-        text.replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace('"', "&quot;")
-            .replace("'", "&apos;")
     )
 
 
