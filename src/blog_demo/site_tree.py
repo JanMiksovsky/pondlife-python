@@ -6,7 +6,8 @@ Defines the site tree: a nested hierarchy of the site's resources.
 import json
 from pathlib import Path
 
-from map_origami import Folder, document, invoke_fns, map_items, paginate
+from map_origami import (Folder, document, invoke_fns, map_extensions,
+                         map_items, paginate)
 
 from .json_feed import json_feed
 from .json_feed_to_rss import json_feed_to_rss
@@ -36,10 +37,7 @@ def feed():
 def pages_area():
     """Paginated set of posts: 1.html, 2.html, ..."""
     paginated = paginate(post_docs)
-    return {
-        f"{i + 1}.html": multi_post_page(page)
-        for i, page in enumerate(paginated)
-    }
+    return map_extensions(paginated, "->.html", value=multi_post_page)
 
 
 def posts_area():

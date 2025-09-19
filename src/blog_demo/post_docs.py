@@ -19,8 +19,8 @@ file name (slug + ".html"), with properties:
 """
 
 
-from map_origami import (Folder, add_next_previous, document, map_items,
-                         reverse_map)
+from map_origami import (Folder, add_next_previous, document, map_extensions,
+                         map_items, reverse_map)
 
 from .md_doc_to_html import md_doc_to_html
 from .parse_date import parse_date
@@ -38,19 +38,16 @@ with_date = map_items(
 )
 
 # Convert the document body to HTML
-post_html_docs = map_items(
-    with_date,
-    key=lambda k: k.removesuffix(".md") + ".html",
-    inverse_key=lambda k: k.removesuffix(".html") + ".md",
-    value=md_doc_to_html
-)
+post_html_docs = map_extensions(with_date, ".md->.html", md_doc_to_html)
 
 # Add `next_key`/`previous_key` properties so the post pages can be linked. The
 # posts are already in chronological order because their names start with a
 # YYYY-MM-DD date, so we can determine the next and previous posts by looking at
 # the adjacent posts in the list. We need to do this before reversing the order
 # in the next step; we want "next" to mean the next post in chronological order,
-# not display order.
+# not display order. Note that this operation is eager because it looks at the
+# entire list of posts; if this step were dropped then the entire pipeline would
+# be lazy.
 cross_linked = add_next_previous(post_html_docs)
 
 # Entries are sorted by date (because file name starts with date, and `Folder`
