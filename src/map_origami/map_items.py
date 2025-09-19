@@ -15,14 +15,11 @@ def map_items(m: Mapping, key=None, inverse_key=None, value=None):
             source_key = inverse_key(result_key) if inverse_key else result_key
             source_value = m[source_key]
             if value:
-                n = arity(value)
-                if n == 3:
-                    return value(source_value, source_key, m)
-                if n == 2:
-                    return value(source_value, source_key)
-                if n == 1:
-                    return value(source_value)
-                return value()
+                # We can pass the source value, key, and the whole map
+                params = [source_value, source_key, m]
+                # Trim to pass only as many parameters as the function wants
+                params = params[:max(0, arity(value))]
+                return value(*params)
             return source_value
 
         def __iter__(self):
