@@ -1,0 +1,8 @@
+# Configure Netlify build
+
+[build]
+  command = "pip install -r requirements.txt && python3 -m src build"
+  publish = "build"
+
+[build.environment]
+  PYTHON_VERSION = "3.13"
