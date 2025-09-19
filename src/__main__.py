@@ -6,9 +6,9 @@ Command-line interface for building and serving the site
 import sys
 from typing import Mapping
 
+from .blog_site import blog_site
 from .folder import Folder
 from .serve import serve
-from .site_tree import site_tree
 
 
 def build(mapping: Mapping):
@@ -22,10 +22,10 @@ def main():
     if len(sys.argv) == 2:
         cmd = sys.argv[1]
         if cmd == "build":
-            build(site_tree)
+            build(blog_site)
             return
         if cmd == "serve":
-            serve(site_tree)
+            serve(blog_site)
     print("usage: python -m src [build|serve]")
     sys.exit(1)
 

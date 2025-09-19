@@ -53,7 +53,7 @@ def content_type(data: bytes, path: str) -> str:
     return "application/octet-stream"
 
 
-def handle_dict(mapping: Mapping):
+def mapping_handler(m: Mapping):
     """Return a request handler class that serves the given mapping"""
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -61,7 +61,7 @@ def handle_dict(mapping: Mapping):
             keys = path_to_keys(path)
             if path.endswith("/"):
                 keys.append("index.html")
-            resource = traverse_keys(mapping, *keys)
+            resource = traverse_keys(m, *keys)
 
             if isinstance(resource, bytes):
                 body = resource
@@ -97,15 +97,15 @@ def path_to_keys(path: str) -> list[str]:
     return [part for part in parts if part]
 
 
-def serve(mapping: Mapping):
+def serve(m: Mapping):
     """Serve the site represented by the given mapping."""
     host = "127.0.0.1"
-    port = 8000
     try:
-        httpd = HTTPServer((host, port), handle_dict(mapping))
+        # Try preferred port
+        httpd = HTTPServer((host, 8000), mapping_handler(m))
     except OSError:
         # Try any free port
-        httpd = HTTPServer((host, 0), handle_dict(mapping))
+        httpd = HTTPServer((host, 0), mapping_handler(m))
     host, port = httpd.server_address
     print(f"Serving on http://{host}:{port}")
     httpd.serve_forever()

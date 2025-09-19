@@ -5,7 +5,7 @@ Utility functions
 import inspect
 import re
 from collections.abc import Mapping
-from typing import Callable
+from typing import Any, Callable
 
 import markdown
 
@@ -115,6 +115,21 @@ def paginate(docs: Mapping, size: int = 10) -> list[dict]:
     return pages
 
 
+def reverse_map(m: Mapping) -> Mapping:
+    """Return a new mapping with the keys reversed."""
+    class ReversedMap(Mapping):
+        def __getitem__(self, key):
+            return m.get(key)
+
+        def __iter__(self):
+            return reversed(list(m.keys()))
+
+        def __len__(self):
+            return len(m)
+
+    return ReversedMap()
+
+
 def text_to_doc(content: str | bytes) -> dict[str, str]:
     """
     Parse a text file with simplistic front matter delimited by lines of '---'.
@@ -147,9 +162,9 @@ def text_to_doc(content: str | bytes) -> dict[str, str]:
 
 def traverse_keys(m: Mapping, *args: str):
     """Use a set of keys to traverse a tree with Mapping nodes."""
-    node = m
+    result: Any = m
     for key in args:
-        if node is None or not isinstance(node, Mapping):
+        if result is None or not isinstance(result, Mapping):
             return None
-        node = node.get(key)
-    return node
+        result = result.get(key)
+    return result

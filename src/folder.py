@@ -19,9 +19,10 @@ class Folder(MutableMapping):
 
     def clear(self):
         """
-        Delete everything in the folder (but not the folder itself). The base
-        implementation of MutableMapping.clear() calls __getitem__ on each item
-        before deleting it -- which is unnecessary, so we override it here.
+        Delete everything in the folder (but not the folder itself). We'd prefer
+        to use the base implementation of MutableMapping.clear(), but it calls
+        __getitem__ on each item before deleting it. That's a waste; we can just
+        delete things.
         """
         if self.path.exists() and self.path.is_dir():
             for entry in self.path.iterdir():
@@ -29,7 +30,7 @@ class Folder(MutableMapping):
                     entry.unlink()  # Delete the file
                 elif entry.is_dir():
                     Folder(entry).clear()  # Recursively clear subfolder
-                    entry.rmdir()  # Remove the empty subfolder
+                    entry.rmdir()  # Remove cleared subfolder
 
     def __delitem__(self, key):
         """Delete a file or subfolder."""

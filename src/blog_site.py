@@ -52,7 +52,7 @@ def posts_area():
 # resources as leaves. The top level of the tree invokes functions to generate
 # the content on demand. Areas within the site are represented by subnodes which
 # are also Mappings.
-site_tree = invoke_fns({
+blog_site = invoke_fns({
     "about.html": lambda: about_html(),
     "assets": lambda: Folder(here / "assets"),
     "feed.json": lambda: json.dumps(feed(), indent=2),
