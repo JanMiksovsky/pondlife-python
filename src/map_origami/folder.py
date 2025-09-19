@@ -1,5 +1,3 @@
-
-
 import os
 from collections.abc import Mapping, MutableMapping
 from pathlib import Path
@@ -9,8 +7,8 @@ import natsort
 
 class Folder(MutableMapping):
     """
-    A folder on disk as a mutable mapping. Keys are filenames or subfolder
-    names. Values are bytes (for files) or other Folders (for subfolders).
+    File system folder as a lazy mutable mapping. Keys are file/subfolder names.
+    Values are bytes (for files) or Folders (for subfolders).
     """
 
     def __init__(self, folder):

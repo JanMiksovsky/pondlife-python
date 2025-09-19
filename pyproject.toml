@@ -1,0 +1,13 @@
+[project]
+name = "map-origami"
+version = "0.0.1"
+dependencies = ["natsort>=8.4"]
+
+[project.optional-dependencies]
+demo = ["Markdown>=3.9"]
+
+[project.scripts]
+demo = "blog_demo.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

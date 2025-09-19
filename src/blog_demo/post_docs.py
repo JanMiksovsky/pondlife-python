@@ -5,8 +5,8 @@ This reads a folder of markdown posts, converts them to document objects (front
 matter as properties, plus a `_body` property), adds next/previous links, and
 sorts them most recent first.
 
-Each step represents the posts as a Mapping, chaning the values (and sometimes
-the keys) as need.
+Each step represents the posts as a Mapping, changing the values (and sometimes
+the keys) as needed.
 
 The final value, `post_docs`, is a Mapping of HTML posts, keyed by the desired
 file name (slug + ".html"), with properties:
@@ -19,16 +19,17 @@ file name (slug + ".html"), with properties:
 """
 
 
-from .folder import Folder
+from map_origami import (Folder, add_next_previous, document, map_items,
+                         reverse_map)
+
+from .md_doc_to_html import md_doc_to_html
 from .parse_date import parse_date
-from .utils import (add_next_previous, map_items, md_doc_to_html_doc,
-                    reverse_map, text_to_doc)
 
 # Read markdown posts as text
 post_folder = Folder("markdown")
 
 # Convert text to document objects
-post_md_docs = map_items(post_folder, value=text_to_doc)
+post_md_docs = map_items(post_folder, value=document)
 
 # Add a date property parsed from the filename
 with_date = map_items(
@@ -41,7 +42,7 @@ post_html_docs = map_items(
     with_date,
     key=lambda k: k.removesuffix(".md") + ".html",
     inverse_key=lambda k: k.removesuffix(".html") + ".md",
-    value=md_doc_to_html_doc
+    value=md_doc_to_html
 )
 
 # Add `next_key`/`previous_key` properties so the post pages can be linked. The

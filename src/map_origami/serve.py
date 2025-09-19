@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Mapping
 from urllib.parse import unquote
 
-from .utils import traverse_keys
+from .traverse_keys import traverse_keys
 
 CONTENT_TYPES = {
     ".css": "text/css; charset=utf-8",
