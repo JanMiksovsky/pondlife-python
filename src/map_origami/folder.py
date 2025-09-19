@@ -52,9 +52,9 @@ class Folder(MutableMapping):
         raise KeyError(key)
 
     def __iter__(self):
-        if not self.path.exists():
-            return
-        yield from (entry.name for entry in natsort.natsorted(self.path.iterdir()))
+        names = [entry.name for entry in natsort.natsorted(
+            self.path.iterdir())] if self.path.exists() else []
+        yield from names
 
     def __len__(self):
         if not self.path.exists():
