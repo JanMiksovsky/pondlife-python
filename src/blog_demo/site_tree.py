@@ -47,8 +47,8 @@ def posts_area():
 
 # The site tree is a tree with Mappings for interior nodes and the desired
 # resources as leaves. The top level of the tree can invoke functions to
-# generate the content on demand. Areas which are just Mappings are lazy; since
-# they don't do any work until requested, they can be included directly.
+# generate the content on demand. Areas which are just Mappings are inherently
+# lazy and are defined directly.
 site_tree = invoke_fns({
     "about.html": lambda: about_html(),
     "assets": Folder(here / "assets"),

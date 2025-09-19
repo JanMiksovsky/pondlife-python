@@ -5,9 +5,11 @@ This explores the representation of a site as a lazy tree of resources whose int
 1. The tree can be directly served, e.g., locally for development.
 2. The tree can be copied to static files for deployment to a static file server.
 
-This demo applies ideas from the [Web Origami](https://weborigami.org) project to create a small library of mapping operations in the `map_origami` package. These operations are lazy when possible.
+This demo applies concepts and operations from the [Web Origami](https://weborigami.org) project to create a small library of Python map operations in the `map_origami` package. Like the originals in Origami's [`Tree`](https://weborigami.org/builtin/tree) collection, the map operations here try to be as lazy as possible.
 
 The bulk of the site content is a set of posts defined in [`post_docs.py`](./src/blog_demo/post_docs.py). This treats the files in the `markdown` folder as a lazy map that is transformed in a series of operations to produce a final map with HTML fragments for each post, ready for rending via templates to create the final HTML pages.
+
+This site is a port of an [original blog project](https://github.com/WebOrigami/pondlife); see that README for a fuller description of the site's structure and the way markdown posts are transformed.
 
 [Live demo](https://pondlife-python.netlify.app)
 

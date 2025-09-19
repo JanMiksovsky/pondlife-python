@@ -14,17 +14,19 @@ def map_items(m: Mapping, key=None, inverse_key=None, value=None):
         def __getitem__(self, result_key):
             source_key = inverse_key(result_key) if inverse_key else result_key
             source_value = m[source_key]
-            if value:
-                # We can pass the source value, key, and the whole map
-                params = [source_value, source_key, m]
-                # Trim to pass only as many parameters as the function wants
-                params = params[:max(0, arity(value))]
-                return value(*params)
-            return source_value
+            if not value:
+                return source_value
+            # We can pass the source value, key, and the whole map
+            params = [source_value, source_key, m]
+            # Trim to pass only as many parameters as the value function wants
+            params = params[:max(0, arity(value))]
+            result_value = value(*params)
+            return result_value
 
         def __iter__(self):
-            for k in m:
-                yield key(k) if key else k
+            for source_key in m:
+                result_key = key(source_key) if key else source_key
+                yield result_key
 
         def __len__(self):
             return len(m)
