@@ -2,7 +2,20 @@
 Markdown post pipeline
 
 This reads a folder of markdown posts, converts them to document objects (front
-matter + HTML body), adds next/previous links, and sorts them most recent first.
+matter as properties, plus a `_body` property), adds next/previous links, and
+sorts them most recent first.
+
+Each step represents the posts as a Mapping, chaning the values (and sometimes
+the keys) as need.
+
+The final value, `post_docs`, is a Mapping of HTML posts, keyed by the desired
+file name (slug + ".html"), with properties:
+
+- title
+- date (a datetime)
+- _body (HTML)
+- next_key (the key of the next post, or None)
+- previous_key (the key of the previous post, or None)
 """
 
 
@@ -11,8 +24,10 @@ from .parse_date import parse_date
 from .utils import (add_next_previous, map_items, md_doc_to_html_doc,
                     text_to_doc)
 
-# Read markdown posts as document objects
+# Read markdown posts as text
 post_folder = Folder("markdown")
+
+# Convert text to document objects
 post_md_docs = map_items(post_folder, value=text_to_doc)
 
 # Add a date property parsed from the filename
@@ -35,7 +50,7 @@ post_html_docs = map_items(
 # the adjacent posts in the list. We need to do this before reversing the order
 # in the next step; we want "next" to mean the next post in chronological order,
 # not display order.
-cross_linked = add_next_previous(dict(post_html_docs))
+cross_linked = add_next_previous(post_html_docs)
 
 # Entries are sorted by date (because file name starts with date, and `Folder`
 # uses natural sort order); reverse the order for latest first
