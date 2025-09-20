@@ -1,6 +1,8 @@
-This is a simple blog site built using lazy Python maps.
+This is a simple blog site built in Python, exploring the representation of a site as a lazy tree of resources.
 
-This explores the representation of a site as a lazy tree of resources whose interior nodes are `Mapping` instances and whose leaf nodes are text, image, or other web resources. This site's lazy tree of resources is defined in [`site_tree.py`](./src/blog_demo/site_tree.py). The tree is used in two rather different ways:
+This site' tree of resources is defined in [`site_tree.py`](./src/blog_demo/site_tree.py). The tree's interior nodes are `Mapping` instances; the leaf nodes are text files, images, and other web file types.
+
+The tree is used in two different ways:
 
 1. The tree can be directly served, e.g., locally for development.
 2. The tree can be copied to static files for deployment to a static file server.
