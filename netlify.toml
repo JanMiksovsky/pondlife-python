@@ -1,7 +1,7 @@
 # Configure Netlify build
 
 [build]
-command = "pip install -e . && demo build"
+command = "pip install -e . && python -m blog_demo build"
 publish = "build"
 
 [build.environment]
