@@ -45,9 +45,7 @@ post_html_docs = map_extensions(with_date, ".md->.html", md_doc_to_html)
 # YYYY-MM-DD date, so we can determine the next and previous posts by looking at
 # the adjacent posts in the list. We need to do this before reversing the order
 # in the next step; we want "next" to mean the next post in chronological order,
-# not display order. Note that this operation is eager because it looks at the
-# entire list of posts; if this step were dropped then the entire pipeline would
-# be lazy.
+# not display order.
 cross_linked = add_next_previous(post_html_docs)
 
 # Entries are sorted by date (because file name starts with date, and `Folder`
