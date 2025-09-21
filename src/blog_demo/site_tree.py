@@ -13,9 +13,7 @@ from .json_feed import json_feed
 from .json_feed_to_rss import json_feed_to_rss
 from .md_doc_to_html import md_doc_to_html
 from .post_docs import post_docs
-from .templates.multi_post_page import multi_post_page
-from .templates.page import page
-from .templates.single_post_page import single_post_page
+from .templates import templates
 
 here = Path(__file__).parent
 
@@ -26,7 +24,7 @@ def about_html():
     md_text = path.read_text(encoding="utf-8")
     md_doc = document(md_text)
     html_doc = md_doc_to_html(md_doc)
-    return page(html_doc)
+    return templates["page"](value=html_doc, key=None, map=None)
 
 
 def feed():
@@ -37,12 +35,12 @@ def feed():
 def pages_area():
     """Paginated set of posts: 1.html, 2.html, ..."""
     paginated = paginate(post_docs)
-    return map_extensions(paginated, "->.html", value=multi_post_page)
+    return map_extensions(paginated, "->.html", value=templates["multi_post_page"])
 
 
 def posts_area():
     """Individual post pages"""
-    return map_items(post_docs, value=single_post_page)
+    return map_items(post_docs, value=templates["single_post_page"])
 
 
 # The site tree is a tree with Mappings for interior nodes and the desired

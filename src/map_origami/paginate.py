@@ -17,6 +17,6 @@ def paginate(docs: Mapping, size: int = 10) -> Mapping[dict]:
             "next_page": str(i + 1) if i < page_count else None,
             "page": i,
             "page_count": page_count,
-            "previous_page": str(i - 1) if i > 0 else None,
+            "previous_page": str(i - 1) if i > 1 else None,
         } for i in range(1, page_count + 1)
     }

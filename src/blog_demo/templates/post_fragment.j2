@@ -1,0 +1,9 @@
+{% macro post_fragment(value, key) %}
+<section>
+  <a href="/posts/{{ key }}">
+    <h2>{{ value.title }}</h2>
+  </a>
+  {{ value.date.strftime("%B %-d, %Y") }}
+  {{ value._body }}
+</section>
+{% endmacro %}

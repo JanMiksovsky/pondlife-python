@@ -1,0 +1,26 @@
+{% extends "page.j2" %}
+{% from "post_fragment.j2" import post_fragment %}
+{% block area %}home{% endblock %}
+{% block body %}
+  <h1>{{site_info.title}}</h1>
+  <p>{{site_info.description}}</p>
+  {% for key, post in value["items"] %}
+    {{ post_fragment(post, key) }}
+  {% endfor %}
+  <p>
+    {% if value.next_page is not none %}
+      <a class="next" href="/pages/{{ value.next_page }}.html"><strong>Older posts</strong></a>
+      <span>&nbsp;</span>
+    {% endif %}
+    {% if value.previous_page == "1" %}
+      <a class="previous" href="/"><strong>Newer posts</strong></a>
+    {% elif value.previous_page is not none %}
+      <a class="previous" href="/pages/{{ value.previous_page }}"><strong>Newer posts</strong></a>
+    {% endif %}
+  </p>
+  <footer>
+    <a href="/feed.xml">RSS feed</a>
+    <a href="/feed.json">JSON feed</a>
+    <a href="https://github.com/JanMiksovsky/pondlife-python">View source</a>
+  </footer>
+{% endblock %}

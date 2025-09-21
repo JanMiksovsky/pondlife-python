@@ -1,0 +1,22 @@
+{% extends "page.j2" %}
+{% from "post_fragment.j2" import post_fragment %}
+{% block body %}
+{{ post_fragment(value, key) }}
+<p>
+  {% if value.previous_key %}
+    <a class="previous" href="{{ value.previous_key }}">
+      Previous: {{ map[value.previous_key]["title"] }}
+    </a>
+    &nbsp;
+  {% endif %}
+  {% if value.next_key %}
+    <a class="next" href="{{ value.next_key }}">
+      Next: {{ map[value.next_key]["title"] }}
+    </a>
+  {% else %}
+    <a class="next" href="/">
+      Back to home
+    </a>
+  {% endif %}
+</p>
+{% endblock %}
