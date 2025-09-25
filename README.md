@@ -13,6 +13,8 @@ The bulk of the site content is a set of posts defined in [`post_docs.py`](./src
 
 This site is a port of an [original blog project](https://github.com/WebOrigami/pondlife); see that README for a fuller description of the site's structure and the way markdown posts are transformed.
 
+Post content is transformed to HTML using [Jinja](https://jinja.palletsprojects.com/) templates, although that step is independent of other aspects of the site architecture. Any other template system could be used just as easily.
+
 [Live demo](https://pondlife-python.netlify.app)
 
 ## Installation
@@ -20,7 +22,7 @@ This site is a port of an [original blog project](https://github.com/WebOrigami/
 ```console
 $ python3 -m venv .venv
 $ source .venv/bin/activate
-$ pip install -e .
+$ pip install -e .[demo]
 ```
 
 ## Run the server locally
