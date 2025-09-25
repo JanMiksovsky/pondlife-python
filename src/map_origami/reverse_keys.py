@@ -1,8 +1,8 @@
 from collections.abc import Mapping
 
 
-def reverse_map(m: Mapping) -> Mapping:
-    """Return a new mapping that lazily reverses the keys."""
+def reverse_keys(m: Mapping) -> Mapping:
+    """Return a new mapping that lazily reverses the order of the keys."""
     class ReversedMap(Mapping):
         def __getitem__(self, key):
             return m.get(key)

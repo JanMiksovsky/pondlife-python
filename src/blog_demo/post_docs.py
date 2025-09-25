@@ -20,7 +20,7 @@ file name (slug + ".html"), with properties:
 
 
 from map_origami import (Folder, add_next_previous, document, map_extensions,
-                         map_items, reverse_map)
+                         map_items, reverse_keys)
 
 from .md_doc_to_html import md_doc_to_html
 from .parse_date import parse_date
@@ -50,4 +50,4 @@ cross_linked = add_next_previous(post_html_docs)
 
 # Entries are sorted by date (because file name starts with date, and `Folder`
 # uses natural sort order); reverse the order for latest first
-post_docs = reverse_map(cross_linked)
+post_docs = reverse_keys(cross_linked)
