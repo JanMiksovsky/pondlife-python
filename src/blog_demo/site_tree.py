@@ -33,20 +33,24 @@ def feed():
 
 
 def pages_area():
-    """Paginated set of posts: 1.html, 2.html, ..."""
+    """
+    Paginated set of posts: 1.html, 2.html, etc.
+    Each set contains 10 posts.
+    """
     paginated = paginate(post_docs)
     return map_extensions(paginated, "->.html", value=templates["multi_post_page"])
 
 
 def posts_area():
-    """Individual post pages"""
+    """Individual post pages: 2025-07-04.html, etc."""
     return map_items(post_docs, value=templates["single_post_page"])
 
 
 # The site tree is a tree with Mappings for interior nodes and the desired
 # resources as leaves. The top level of the tree can invoke functions to
 # generate the content on demand. Areas which are just Mappings are inherently
-# lazy and are defined directly.
+# lazy and are defined directly. Other resources use lambda functions to defer
+# work until the resource is requested.
 site_tree = invoke_fns({
     "about.html": lambda: about_html(),
     "assets": Folder(here / "assets"),

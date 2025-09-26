@@ -16,6 +16,8 @@ file name (slug + ".html"), with properties:
 - _body (text)
 - next_key (the key of the next post, or None)
 - previous_key (the key of the previous post, or None)
+
+See the README.md for details on how this pipeline works.
 """
 
 
