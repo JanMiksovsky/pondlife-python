@@ -21,14 +21,14 @@ See the README.md for details on how this pipeline works.
 """
 
 
-from map_origami import (Folder, add_next_previous, document, map_extensions,
-                         map_items, reverse_keys)
+from map_origami import (FolderMap, add_next_previous, document,
+                         map_extensions, map_items, reverse_keys)
 
 from .md_doc_to_html import md_doc_to_html
 from .parse_date import parse_date
 
 # Read markdown posts as text
-post_folder = Folder("markdown")
+post_folder = FolderMap("markdown")
 
 # Convert text to document objects
 post_md_docs = map_items(post_folder, value=document)

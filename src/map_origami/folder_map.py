@@ -5,7 +5,7 @@ from pathlib import Path
 import natsort
 
 
-class Folder(MutableMapping):
+class FolderMap(MutableMapping):
     """
     File system folder as a lazy mutable mapping. Keys are file/subfolder names.
     Values are bytes (for files) or Folders (for subfolders).
@@ -27,7 +27,7 @@ class Folder(MutableMapping):
                 if entry.is_file():
                     entry.unlink()  # Delete the file
                 elif entry.is_dir():
-                    Folder(entry).clear()  # Recursively clear subfolder
+                    FolderMap(entry).clear()  # Recursively clear subfolder
                     entry.rmdir()  # Remove cleared subfolder
 
     def __delitem__(self, key):
@@ -37,7 +37,7 @@ class Folder(MutableMapping):
         if entry_path.is_file():
             entry_path.unlink()
         elif entry_path.is_dir():
-            Folder(entry_path).clear()
+            FolderMap(entry_path).clear()
             entry_path.rmdir()
         else:
             raise KeyError(key)
@@ -48,7 +48,7 @@ class Folder(MutableMapping):
         if entry_path.is_file():
             return entry_path.read_bytes()
         if entry_path.is_dir():
-            return Folder(entry_path)
+            return FolderMap(entry_path)
         raise KeyError(key)
 
     def __iter__(self):
@@ -67,7 +67,7 @@ class Folder(MutableMapping):
         entry_path = self.path / key
         if isinstance(value, Mapping):
             # Recursively write subfolder
-            Folder(entry_path).update(value)
+            FolderMap(entry_path).update(value)
         else:
             data = value if isinstance(value, bytes) else value.encode("utf-8")
             with open(entry_path, "wb") as f:

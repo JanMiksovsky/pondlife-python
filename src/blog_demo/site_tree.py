@@ -6,7 +6,7 @@ Defines the site tree: a nested hierarchy of the site's resources.
 import json
 from pathlib import Path
 
-from map_origami import (Folder, document, invoke_fns, map_extensions,
+from map_origami import (FolderMap, document, invoke_fns, map_extensions,
                          map_items, paginate)
 
 from .json_feed import json_feed
@@ -53,10 +53,10 @@ def posts_area():
 # work until the resource is requested.
 site_tree = invoke_fns({
     "about.html": lambda: about_html(),
-    "assets": Folder(here / "assets"),
+    "assets": FolderMap(here / "assets"),
     "feed.json": lambda: json.dumps(feed(), indent=2),
     "feed.xml": lambda: json_feed_to_rss(feed()),
-    "images": Folder(here / ".." / ".." / "images"),
+    "images": FolderMap(here / ".." / ".." / "images"),
     "index.html": lambda: pages_area()["1.html"],  # same as pages/1.html
     "pages": lambda: pages_area(),
     "posts": posts_area(),

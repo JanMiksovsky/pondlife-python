@@ -6,14 +6,14 @@ from pathlib import Path
 
 from jinja2 import DictLoader, Environment
 
-from map_origami import Folder, map_extensions, map_items
+from map_origami import FolderMap, map_extensions, map_items
 
 from .site_info import site_info
 
 # Create a loader for the folder. Could also use FileSystemLoader, but we
 # already want to treat the folder as a map.
 here = Path(__file__).parent
-folder = Folder(here / "templates")
+folder = FolderMap(here / "templates")
 texts = map_items(folder, value=lambda b: b.decode("utf-8"))
 env = Environment(loader=DictLoader(texts))
 

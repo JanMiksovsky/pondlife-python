@@ -1,6 +1,6 @@
 from .add_next_previous import add_next_previous
 from .document import document
-from .folder import Folder
+from .folder_map import FolderMap
 from .invoke_fns import invoke_fns
 from .map_extensions import map_extensions
 from .map_items import map_items
@@ -10,7 +10,7 @@ from .serve import serve
 from .traverse_keys import traverse_keys
 
 __all__ = [
-    Folder,
+    FolderMap,
     add_next_previous,
     document,
     invoke_fns,

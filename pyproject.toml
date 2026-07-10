@@ -1,10 +1,7 @@
 [project]
 name = "map-origami"
 version = "0.0.1"
-dependencies = ["natsort>=8.4"]
-
-[project.optional-dependencies]
-demo = ["Jinja2>=3.1.6", "markdown>=3.9"]
+dependencies = ["Jinja2>=3.1.6", "markdown>=3.9", "natsort>=8.4"]
 
 [project.scripts]
 demo = "blog_demo.__main__:main"
