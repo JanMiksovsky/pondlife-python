@@ -15,7 +15,8 @@ from .site_tree import site_tree
 def build(m: Mapping):
     """
     Given a mapping representing the site structure, copy the entire tree into
-    the build folder to create static files.
+    the build folder to create static files. Both clear() and update() are
+    standard Mapping methods.
     """
     build_folder = FolderMap("build")
     build_folder.clear()

@@ -27,11 +27,6 @@ def about_html():
     return templates["page"](value=html_doc, key=None, map=None)
 
 
-def feed():
-    """Site posts in JSON Feed format"""
-    return json_feed(post_docs)
-
-
 def pages_area():
     """
     Paginated set of posts: 1.html, 2.html, etc.
@@ -46,18 +41,18 @@ def posts_area():
     return map_items(post_docs, value=templates["single_post_page"])
 
 
+feed = json_feed(post_docs)
+
 # The site tree is a tree with Mappings for interior nodes and the desired
-# resources as leaves. The top level of the tree can invoke functions to
-# generate the content on demand. Areas which are just Mappings are inherently
-# lazy and are defined directly. Other resources use lambda functions to defer
-# work until the resource is requested.
-site_tree = invoke_fns({
-    "about.html": lambda: about_html(),
+# resources as leaves. Areas which are just Mappings are inherently lazy and are
+# defined directly.
+site_tree = {
+    "about.html": about_html(),
     "assets": FolderMap(here / "assets"),
-    "feed.json": lambda: json.dumps(feed(), indent=2),
-    "feed.xml": lambda: json_feed_to_rss(feed()),
+    "feed.json": json.dumps(feed, indent=2),
+    "feed.xml": json_feed_to_rss(feed),
     "images": FolderMap(here / ".." / ".." / "images"),
-    "index.html": lambda: pages_area()["1.html"],  # same as pages/1.html
-    "pages": lambda: pages_area(),
+    "index.html": pages_area()["1.html"],  # same as pages/1.html
+    "pages": pages_area(),
     "posts": posts_area(),
-})
+}
