@@ -12,7 +12,7 @@ from map_origami import FolderMap, serve
 from .site_tree import site_tree
 
 
-def build(m: Mapping):
+def build(site: Mapping):
     """
     Given a mapping representing the site structure, copy the entire tree into
     the build folder to create static files. Both clear() and update() are
@@ -20,7 +20,7 @@ def build(m: Mapping):
     """
     build_folder = FolderMap("build")
     build_folder.clear()
-    build_folder.update(m)
+    build_folder.update(site)
 
 
 def main():

@@ -26,4 +26,5 @@ def add_next_previous(docs: Mapping):
 
         def __len__(self):
             return len(docs)
+
     return DocsWithNextPrevious()
